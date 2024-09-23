@@ -1,4 +1,3 @@
-import { NextApiRequest } from "next";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -24,5 +23,6 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({
     src: invoice.qr_code_svg,
+    hash: invoice.payment_hash,
   });
 }
