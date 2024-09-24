@@ -1,6 +1,9 @@
-> You will need a configured and active [LiveSatoshi-Server](https://github.com/TheMhv/LiveSatoshi-Server) to run this project.
+# LiveSatoshi
+Enable TTS messages with voice models in your live stream using payments on Lightning Network
 
 ## Instalation
+
+>#### You will need a configured and active [LiveSatoshi-Server](https://github.com/TheMhv/LiveSatoshi-Server) to run this project.
 
 * First, install the packages:
 
