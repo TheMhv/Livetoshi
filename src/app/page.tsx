@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,11 +8,24 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 
+interface Config {
+  models: { name: string }[];
+  max_text_length?: number;
+  min_satoshi_amount?: number;
+}
+
+interface FormData {
+  name: string;
+  model: string;
+  text: string;
+  amount: string;
+}
+
 export default function Home() {
-  const [configs, setConfig] = useState([]);
-  const [qrCode, setQRCode] = useState("");
-  const [paymentStatus, setPaymentStatus] = useState(false);
-  const [formData, setFormData] = useState({
+  const [configs, setConfig] = useState<Config>({ models: [] });
+  const [qrCode, setQRCode] = useState<string>("");
+  const [paymentStatus, setPaymentStatus] = useState<boolean>(false);
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     model: "",
     text: "",
@@ -24,7 +37,7 @@ export default function Home() {
       try {
         const response = await fetch(`/api/get_configs`);
         if (!response.ok) throw new Error("Failed to fetch configurations");
-        const data = await response.json();
+        const data: Config = await response.json();
         setConfig(data);
       } catch (error) {
         console.error("Error fetching configurations:", error);
@@ -34,16 +47,16 @@ export default function Home() {
     getConfigs();
   }, []);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleModelChange = (value) => {
+  const handleModelChange = (value: string) => {
     setFormData((prev) => ({ ...prev, model: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const response = await fetch("/api/create_invoice", {
@@ -59,7 +72,7 @@ export default function Home() {
         throw new Error(errorData.error || "Failed to create invoice");
       }
 
-      const reader = response.body.getReader();
+      const reader = response.body!.getReader();
       const decoder = new TextDecoder();
 
       while (true) {
