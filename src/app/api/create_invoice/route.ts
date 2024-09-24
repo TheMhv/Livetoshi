@@ -1,28 +1,31 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   const data = await request.json();
 
-  const response = await fetch("https://api.getalby.com/invoices", {
-    method: "post",
+  const response = await fetch(`http://${process.env.RVC_API_HOST}:${process.env.RVC_API_PORT}/create_invoice?amount=${data.amount}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({
-      amount: data.amount,
-      metadata: {
         name: data.name,
         text: data.text,
         model: data.model,
-      },
     }),
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.ALBY_TOKEN}`,
-    },
   });
 
-  const invoice = await response.json();
+  if (!response.ok) {
+    const errorData = await response.json();
+    return NextResponse.json({ error: errorData.detail }, { status: response.status });
+  }
 
-  return NextResponse.json({
-    src: invoice.qr_code_svg,
-    hash: invoice.payment_hash,
+  // Return the response as a streaming response
+  return new NextResponse(response.body, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      "Connection": "keep-alive",
+    },
   });
 }
