@@ -8,8 +8,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 
-const Home = () => {
-  const [models, setModels] = useState([]);
+export default function Home() {
+  const [configs, setConfig] = useState([]);
   const [qrCode, setQRCode] = useState("");
   const [paymentStatus, setPaymentStatus] = useState(false);
   const [formData, setFormData] = useState({
@@ -18,39 +18,21 @@ const Home = () => {
     text: "",
     amount: "",
   });
-  const [paymentHash, setPaymentHash] = useState(null);
 
   useEffect(() => {
-    const fetchModels = async () => {
+    const getConfigs = async () => {
       try {
-        const response = await fetch(`/api/models`);
-        if (!response.ok) throw new Error("Failed to fetch models");
+        const response = await fetch(`/api/get_configs`);
+        if (!response.ok) throw new Error("Failed to fetch configurations");
         const data = await response.json();
-        setModels(data);
+        setConfig(data);
       } catch (error) {
-        console.error("Error fetching models:", error);
+        console.error("Error fetching configurations:", error);
       }
     };
 
-    fetchModels();
+    getConfigs();
   }, []);
-
-  useEffect(() => {
-    let intervalId;
-    if (paymentHash && !paymentStatus) {
-      intervalId = setInterval(async () => {
-        const status = await checkPayment(paymentHash);
-        if (status) {
-          setPaymentStatus(true);
-          clearInterval(intervalId);
-        }
-      }, 3000);
-    }
-
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, [paymentHash, paymentStatus]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -71,26 +53,39 @@ const Home = () => {
         },
         body: JSON.stringify(formData),
       });
-      if (!response.ok) throw new Error("Failed to create invoice");
-      const data = await response.json();
-      setQRCode(data.src);
-      setPaymentHash(data.hash);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to create invoice");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        const decodedChunk = decoder.decode(value, { stream: true });
+        const events = decodedChunk.split("\n\n");
+
+        for (const event of events) {
+          if (event.trim() === "") continue;
+          const [, data] = event.split("data: ");
+          const parsedData = JSON.parse(data);
+
+          if (parsedData.qr_code) {
+            setQRCode(parsedData.qr_code);
+          }
+
+          if (parsedData.status === "settled") {
+            setPaymentStatus(true);
+            break;
+          }
+        }
+      }
     } catch (error) {
       console.error("Error creating invoice:", error);
-    }
-  };
-
-  const checkPayment = async (payment_hash) => {
-    try {
-      const response = await fetch(
-        `/api/check_invoice?payment_hash=${payment_hash}`
-      );
-      if (!response.ok) throw new Error("Failed to get invoice");
-      const data = await response.json();
-      return data.status;
-    } catch (error) {
-      console.error("Error checking invoice:", error);
-      return false;
     }
   };
 
@@ -134,13 +129,13 @@ const Home = () => {
                 />
               </div>
 
-              {models.length > 0 ? (
+              {configs?.models?.length > 0 ? (
                 <RadioGroup
                   value={formData.model}
                   onValueChange={handleModelChange}
                   className="grid grid-cols-2 gap-4"
                 >
-                  {models.map((model, index) => (
+                  {configs.models.map((model, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <RadioGroupItem
                         value={model.name}
@@ -165,6 +160,7 @@ const Home = () => {
                   id="text"
                   name="text"
                   value={formData.text}
+                  maxLength={configs?.max_text_length || 200}
                   onChange={handleInputChange}
                   required
                 />
@@ -176,7 +172,7 @@ const Home = () => {
                   id="amount"
                   name="amount"
                   type="number"
-                  min={10}
+                  min={configs?.min_satoshi_amount || 100}
                   value={formData.amount}
                   onChange={handleInputChange}
                   required
@@ -195,6 +191,4 @@ const Home = () => {
       </Card>
     </div>
   );
-};
-
-export default Home;
+}
