@@ -1,31 +1,57 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createInvoice, Invoice } from "@/lib/nostr/invoice";
 
-export async function POST(request: NextRequest) {
-  const data = await request.json();
+interface RequestBody {
+  npub: string;
+  text: string;
+  amount: number;
+  eventId: string;
+}
 
-  const response = await fetch(`http://${process.env.RVC_API_HOST}:${process.env.RVC_API_PORT}/create_invoice?amount=${data.amount}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-        name: data.name,
-        text: data.text,
-        model: data.model,
-    }),
-  });
+async function* check_payment(invoice: Invoice) {
+  yield `data: ${JSON.stringify({ invoice: invoice })}\n\n`;
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    return NextResponse.json({ error: errorData.detail }, { status: response.status });
+  const paymentRequest = await fetch(invoice.verify);
+  let payment = await paymentRequest.json();
+
+  while (!payment.settled) {
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    const paymentRequest = await fetch(invoice.verify);
+    payment = await paymentRequest.json();
   }
 
+  yield `data: ${JSON.stringify({ status: "settled" })}\n\n`;
+}
+
+export async function POST(request: NextRequest) {
+  const data: RequestBody = await request.json();
+
+  const invoice = await createInvoice(
+    data.npub,
+    data.text,
+    data.amount,
+    data.eventId
+  );
+
+  if (!invoice) {
+    return null;
+  }
+
+  const stream = new ReadableStream({
+    async start(controller) {
+      for await (const chunk of check_payment(invoice)) {
+        controller.enqueue(new TextEncoder().encode(chunk));
+      }
+      controller.close();
+    },
+  });
+
   // Return the response as a streaming response
-  return new NextResponse(response.body, {
+  return new NextResponse(stream, {
     headers: {
-      "Content-Type": "text/event-stream",
+      Connection: "keep-alive",
       "Cache-Control": "no-cache",
-      "Connection": "keep-alive",
+      "Content-Type": "text/event-stream",
     },
   });
 }

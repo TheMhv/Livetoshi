@@ -37,6 +37,7 @@ export default async function GoalPage({ params }: PageProps) {
   return (
     <div className="min-h-screen p-8 pb-20 sm:p-20 font-sans">
       <Card className="max-w-md mx-auto">
+        <h2 className="text-2xl font-bold text-center my-2">LiveSatoshi</h2>
         <CardHeader>
           <Image
             src={profile.getPicture() || "/default-profile.png"}
@@ -49,10 +50,12 @@ export default async function GoalPage({ params }: PageProps) {
           <h2 className="text-2xl font-bold text-center">
             {profile.getDisplayName()}
           </h2>
-        </CardHeader>
 
-        <CardContent>
-          <div className="mb-4">
+          <p className="text-center text-gray-600">
+            Envie uma mensagem e ajude nossa meta!
+          </p>
+
+          <div>
             <p className="text-center font-bold">{event.content}</p>
 
             <div>
@@ -65,7 +68,9 @@ export default async function GoalPage({ params }: PageProps) {
               </div>
             </div>
           </div>
+        </CardHeader>
 
+        <CardContent>
           <Form
             npub={event.author.toBech32()}
             eventId={event.id.toBech32()}
