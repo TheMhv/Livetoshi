@@ -11,7 +11,7 @@ interface RequestBody {
   eventId?: string;
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<Response> {
   const data: RequestBody = await request.json();
 
   const message: Message = {
@@ -28,7 +28,10 @@ export async function POST(request: NextRequest) {
   );
 
   if (!invoice) {
-    return null;
+    return new NextResponse(JSON.stringify({ error: "Failed to create invoice" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   const stream = new ReadableStream({
