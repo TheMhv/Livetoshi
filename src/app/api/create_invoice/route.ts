@@ -8,7 +8,7 @@ interface RequestBody {
   text: string;
   model: string;
   amount: number;
-  eventId: string;
+  eventId?: string;
 }
 
 export async function POST(request: NextRequest) {

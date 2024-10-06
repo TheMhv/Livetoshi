@@ -12,7 +12,7 @@ export async function createInvoice(
   destination: string,
   message: Message,
   amount: number,
-  eventId: string
+  eventId?: string
 ): Promise<Invoice | null> {
   await loadWasmAsync();
 

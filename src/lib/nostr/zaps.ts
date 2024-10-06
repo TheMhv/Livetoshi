@@ -43,13 +43,17 @@ export async function createRequest(
   destination: string,
   message: Message,
   amount: number,
-  eventId: string,
+  eventId?: string,
   lnurl?: string
 ) {
   await loadWasmAsync();
 
   const pubkey = PublicKey.parse(destination);
-  const event = EventId.parse(eventId);
+  
+  let eventID = undefined;
+  if (eventId) {
+    eventID = EventId.parse(eventId);
+  }
 
   return await nip57AnonymousZapRequest(
     new ZapRequestData(
@@ -63,7 +67,7 @@ export async function createRequest(
       JSON.stringify(message),
       amount * 1000,
       lnurl,
-      event
+      eventID
     )
   );
 }
