@@ -1,18 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
+import { loadConfig, Settings } from "@/lib/config";
 
-interface Config {
-  models: { name: string }[];
-  max_text_length?: number;
-  min_satoshi_amount?: number;
-}
+const config: Settings = loadConfig();
 
 interface FormData {
   name: string;
@@ -22,7 +19,6 @@ interface FormData {
 }
 
 export default function Home() {
-  const [configs, setConfig] = useState<Config>({ models: [] });
   const [qrCode, setQRCode] = useState<string>("");
   const [paymentStatus, setPaymentStatus] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
@@ -31,21 +27,6 @@ export default function Home() {
     text: "",
     amount: "",
   });
-
-  useEffect(() => {
-    const getConfigs = async () => {
-      try {
-        const response = await fetch(`/api/get_configs`);
-        if (!response.ok) throw new Error("Failed to fetch configurations");
-        const data: Config = await response.json();
-        setConfig(data);
-      } catch (error) {
-        console.error("Error fetching configurations:", error);
-      }
-    };
-
-    getConfigs();
-  }, []);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -142,13 +123,13 @@ export default function Home() {
                 />
               </div>
 
-              {configs?.models?.length > 0 ? (
+              {config.MODELS?.length > 0 ? (
                 <RadioGroup
                   value={formData.model}
                   onValueChange={handleModelChange}
                   className="grid grid-cols-2 gap-4"
                 >
-                  {configs.models.map((model, index) => (
+                  {config.MODELS.map((model, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <RadioGroupItem
                         value={model.name}
@@ -173,7 +154,7 @@ export default function Home() {
                   id="text"
                   name="text"
                   value={formData.text}
-                  maxLength={configs?.max_text_length || 200}
+                  maxLength={config.MAX_TEXT_LENGTH}
                   onChange={handleInputChange}
                   required
                 />
@@ -185,7 +166,7 @@ export default function Home() {
                   id="amount"
                   name="amount"
                   type="number"
-                  min={configs?.min_satoshi_amount || 100}
+                  min={config.MIN_SATOSHI_QNT}
                   value={formData.amount}
                   onChange={handleInputChange}
                   required
