@@ -1,16 +1,20 @@
 "use client";
 
+import { ChangeEvent, FormEvent, useState } from "react";
+import Image from "next/image";
+import QRCode from "qrcode";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
 import { Settings } from "@/lib/config";
-import Image from "next/image";
-import { ChangeEvent, FormEvent, useState } from "react";
-import QRCode from "qrcode";
 
 interface FormData {
   name: string;
   text: string;
+  model: string;
   amount: string;
 }
 
@@ -33,12 +37,17 @@ FormProps) {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     text: "",
+    model: "",
     amount: "",
   });
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleModelChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, model: value }));
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -166,6 +175,26 @@ FormProps) {
               required
             />
           </div>
+
+          {config.MODELS?.length > 0 && (
+            <RadioGroup
+              value={formData.model}
+              onValueChange={handleModelChange}
+              className="grid grid-cols-2 gap-4"
+            >
+              {config.MODELS.map((model, index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <RadioGroupItem value={model} id={`model-${index}`} />
+                  <Label
+                    htmlFor={`model-${index}`}
+                    className="flex items-center justify-center p-4 bg-white border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-500 peer-checked:text-blue-500 hover:bg-gray-50 w-full"
+                  >
+                    {model}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          )}
 
           <div>
             <Label htmlFor="text">Mensagem</Label>
