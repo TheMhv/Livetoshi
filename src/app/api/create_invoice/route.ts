@@ -1,34 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createInvoice, Invoice } from "@/lib/nostr/invoice";
+import { Message } from "@/lib/nostr/zaps";
 
 interface RequestBody {
   npub: string;
+  name: string;
   text: string;
+  model: string;
   amount: number;
   eventId: string;
-}
-
-async function* check_payment(invoice: Invoice) {
-  yield `data: ${JSON.stringify({ invoice: invoice })}\n\n`;
-
-  const paymentRequest = await fetch(invoice.verify);
-  let payment = await paymentRequest.json();
-
-  while (!payment.settled) {
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    const paymentRequest = await fetch(invoice.verify);
-    payment = await paymentRequest.json();
-  }
-
-  yield `data: ${JSON.stringify({ status: "settled" })}\n\n`;
 }
 
 export async function POST(request: NextRequest) {
   const data: RequestBody = await request.json();
 
+  const message: Message = {
+    name: data.name,
+    comment: data.text,
+    model: data.model,
+  };
+
   const invoice = await createInvoice(
     data.npub,
-    data.text,
+    message,
     data.amount,
     data.eventId
   );
@@ -54,4 +48,19 @@ export async function POST(request: NextRequest) {
       "Content-Type": "text/event-stream",
     },
   });
+}
+
+async function* check_payment(invoice: Invoice) {
+  yield `data: ${JSON.stringify({ invoice: invoice })}\n\n`;
+
+  const paymentRequest = await fetch(invoice.verify);
+  let payment = await paymentRequest.json();
+
+  while (!payment.settled) {
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    const paymentRequest = await fetch(invoice.verify);
+    payment = await paymentRequest.json();
+  }
+
+  yield `data: ${JSON.stringify({ status: "settled" })}\n\n`;
 }

@@ -1,6 +1,6 @@
 import { Client, loadWasmAsync } from "@rust-nostr/nostr-sdk";
 import { getUser } from "./users";
-import { createRequest } from "./zaps";
+import { createRequest, Message } from "./zaps";
 
 export type Invoice = {
   status: string;
@@ -10,7 +10,7 @@ export type Invoice = {
 
 export async function createInvoice(
   destination: string,
-  comment: string,
+  message: Message,
   amount: number,
   eventId: string
 ): Promise<Invoice | null> {
@@ -46,11 +46,11 @@ export async function createInvoice(
 
   const callbackUrl = new URL(lnData.callback);
 
-  const nostrEvent = await createRequest(destination, comment, amount, eventId);
+  const nostrEvent = await createRequest(destination, message, amount, eventId);
 
   const params = new URLSearchParams({
     ...Object.fromEntries(callbackUrl.searchParams),
-    comment: comment,
+    comment: message.comment || "",
     amount: Math.floor(amount * 1000).toString(),
     nostr: nostrEvent.asJson(),
   });

@@ -33,9 +33,15 @@ export async function getFromEvent(id: string) {
   return await client.getEventsOf([filter], source);
 }
 
+export type Message = {
+  name?: string;
+  comment?: string;
+  model?: string;
+};
+
 export async function createRequest(
   destination: string,
-  comment: string,
+  message: Message,
   amount: number,
   eventId: string,
   lnurl?: string
@@ -54,7 +60,7 @@ export async function createRequest(
         "wss://relay.damus.io",
         "wss://nostr.wine",
       ],
-      comment,
+      JSON.stringify(message),
       amount * 1000,
       lnurl,
       event
