@@ -55,6 +55,8 @@ export async function createRequest(
     eventID = EventId.parse(eventId);
   }
 
+  const text = `${message.name} enviou ${amount} satoshis: ${message.comment}`;
+
   return await nip57AnonymousZapRequest(
     new ZapRequestData(
       pubkey,
@@ -64,7 +66,7 @@ export async function createRequest(
         "wss://relay.damus.io",
         "wss://nostr.wine",
       ],
-      JSON.stringify(message),
+      text,
       amount * 1000,
       lnurl,
       eventID

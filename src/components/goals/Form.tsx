@@ -34,6 +34,7 @@ FormProps) {
   const [qrCode, setQRCode] = useState<string>("");
   const [paymentStatus, setPaymentStatus] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [invoice, setInvoice] = useState<string>("");
   const [formData, setFormData] = useState<FormData>({
     name: "",
     text: "",
@@ -48,6 +49,12 @@ FormProps) {
 
   const handleModelChange = (value: string) => {
     setFormData((prev) => ({ ...prev, model: value }));
+  };
+
+  const handleQRCodeClick = () => {
+    if (invoice) {
+      window.open(`lightning:${invoice}`, "_blank");
+    }
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -100,6 +107,7 @@ FormProps) {
             } catch (error) {
               console.error(error);
               setQRCode(await QRCode.toDataURL(parsedData.invoice.pr));
+              setInvoice(parsedData.invoice.pr);
             }
           }
 
@@ -121,19 +129,31 @@ FormProps) {
     <>
       {qrCode && !paymentStatus && (
         <>
-          <Image
-            src={qrCode}
-            alt="QR Code"
-            width={800}
-            height={800}
-            className="mx-auto"
-          />
+          <div onClick={handleQRCodeClick} className="cursor-pointer">
+            <Image
+              src={qrCode}
+              alt="QR Code"
+              width={800}
+              height={800}
+              className="mx-auto"
+            />
+          </div>
+
+          <div className="text-center mb-4">
+            <a
+              href={`lightning:${invoice}`}
+              className="text-blue-600 hover:text-blue-800 underline"
+            >
+              Pagar com Lightning
+            </a>
+          </div>
 
           <Button
             onClick={() => {
               setQRCode("");
               setPaymentStatus(false);
               setIsSubmitting(false);
+              setInvoice("");
             }}
             className="w-full bg-gray-600 hover:bg-gray-700 text-white"
           >
@@ -155,6 +175,7 @@ FormProps) {
                 setQRCode("");
                 setPaymentStatus(false);
                 setIsSubmitting(false);
+                setInvoice("");
               }}
               className="w-full bg-gray-600 hover:bg-gray-700 text-white"
             >
