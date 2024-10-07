@@ -1,5 +1,4 @@
 import {
-  Client,
   EventId,
   EventSource,
   Filter,
@@ -10,17 +9,10 @@ import {
   Timestamp,
   ZapRequestData,
 } from "@rust-nostr/nostr-sdk";
+import { clientConnect } from "./client";
 
 export async function getFromEvent(id: string) {
-  await loadWasmAsync();
-
-  const client = new Client();
-
-  await client.addRelay("wss://relay.snort.social");
-  await client.addRelay("wss://nos.lol");
-  await client.addRelay("wss://relay.damus.io");
-  await client.addRelay("wss://nostr.wine");
-  await client.connect();
+  const client = await clientConnect();
 
   const eventId = EventId.parse(id);
 

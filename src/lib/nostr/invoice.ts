@@ -1,4 +1,3 @@
-import { Client, loadWasmAsync } from "@rust-nostr/nostr-sdk";
 import { getUser } from "./users";
 import { createRequest, Message } from "./zaps";
 
@@ -14,16 +13,6 @@ export async function createInvoice(
   amount: number,
   eventId?: string
 ): Promise<Invoice | null> {
-  await loadWasmAsync();
-
-  const client = new Client();
-
-  await client.addRelay("wss://relay.snort.social");
-  await client.addRelay("wss://nos.lol");
-  await client.addRelay("wss://relay.damus.io");
-  await client.addRelay("wss://nostr.wine");
-  await client.connect();
-
   const user = await getUser(destination);
 
   if (!user) {
