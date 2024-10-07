@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import Image from "next/image";
 import QRCode from "qrcode";
 
@@ -41,6 +41,8 @@ FormProps) {
     model: "",
     amount: "",
   });
+  const [copySuccess, setCopySuccess] = useState<boolean>(false);
+  const invoiceInputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -54,6 +56,15 @@ FormProps) {
   const handleQRCodeClick = () => {
     if (invoice) {
       window.open(`lightning:${invoice}`, "_blank");
+    }
+  };
+
+  const handleCopyInvoice = () => {
+    if (invoiceInputRef.current) {
+      invoiceInputRef.current.select();
+      document.execCommand("copy");
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
     }
   };
 
@@ -148,12 +159,32 @@ FormProps) {
             </a>
           </div>
 
+          <div className="mb-4">
+            <Label htmlFor="invoice">Invoice</Label>
+            <div className="flex">
+              <Input
+                id="invoice"
+                ref={invoiceInputRef}
+                value={invoice}
+                readOnly
+                className="flex-grow"
+              />
+              <Button
+                onClick={handleCopyInvoice}
+                className="ml-2 bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                {copySuccess ? "Copiado!" : "Copiar"}
+              </Button>
+            </div>
+          </div>
+
           <Button
             onClick={() => {
               setQRCode("");
               setPaymentStatus(false);
               setIsSubmitting(false);
               setInvoice("");
+              setCopySuccess(false);
             }}
             className="w-full bg-gray-600 hover:bg-gray-700 text-white"
           >
@@ -176,6 +207,7 @@ FormProps) {
                 setPaymentStatus(false);
                 setIsSubmitting(false);
                 setInvoice("");
+                setCopySuccess(false);
               }}
               className="w-full bg-gray-600 hover:bg-gray-700 text-white"
             >
