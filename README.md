@@ -3,30 +3,40 @@ Enable TTS messages with voice models in your live stream using payments on Ligh
 
 ## Instalation
 
->#### You will need a configured and active [LiveSatoshi-Server](https://github.com/TheMhv/LiveSatoshi-Server) to run this project.
-
 * First, install the packages:
 
 ```bash
 $ npm install
 ```
 
-* Create the `.env` file:
+### Config your .env
 
-> you can copy from `.env.example`:
-> ```bash
-> $ cp .env.example .env
-> ```
+Copy the example .env
+```bash
+$ cp .env.example .env
+```
 
-* Set the `RVC_API_HOST` and `RVC_API_HOST` variables to the address of your [LiveSatoshi-Server](https://github.com/TheMhv/LiveSatoshi-Server)
+Change values according to your preference.
 
-* Then, run the development server:
+## Usage
+
+* You can run the development server on localhost:
 ```bash
 $ npm run dev
 ```
 
 Open `http://localhost:3000` with your browser to see the result.
 
-## Customization
+## Deploy
 
-If you want to customize the payment page, feel free to edit the `src/app/page.tsx` file
+For deploy, first you need to build:
+```bash
+$ npm run build
+```
+
+Then, start the server:
+```bash
+$ npm run start
+```
+
+And run the [widget project](https://github.com/TheMhv/LiveSatoshi-Server).
