@@ -14,7 +14,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "LiveSatoshi",
+  title: "Livetoshi",
   description:
     "Enable TTS messages with voice models in your live stream using the Lightning Network",
 };

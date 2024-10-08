@@ -16,7 +16,7 @@ export default async function GoalPage({ params }: PageProps) {
   return (
     <div className="min-h-screen p-8 pb-20 sm:p-20 font-sans">
       <Card className="max-w-md mx-auto">
-        <h2 className="text-2xl font-bold text-center my-2">LiveSatoshi</h2>
+        <h2 className="text-2xl font-bold text-center my-2">Livetoshi</h2>
         <CardHeader>
           <Image
             src={profile.getPicture() || "/default-profile.png"}

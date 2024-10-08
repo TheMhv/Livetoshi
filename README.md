@@ -1,4 +1,4 @@
-# LiveSatoshi
+# Livetoshi
 Enable TTS messages with voice models in your live stream using payments on Lightning Network
 
 ## Instalation
@@ -39,4 +39,4 @@ Then, start the server:
 $ npm run start
 ```
 
-And run the [widget project](https://github.com/TheMhv/LiveSatoshi-Server).
+And run the [widget project](https://github.com/TheMhv/Livetoshi-Server).

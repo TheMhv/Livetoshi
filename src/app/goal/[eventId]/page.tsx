@@ -50,7 +50,7 @@ export default async function GoalPage({ params }: PageProps) {
       )}
 
       <Card className="max-w-md mx-auto">
-        <h2 className="text-2xl font-bold text-center my-2">LiveSatoshi</h2>
+        <h2 className="text-2xl font-bold text-center my-2">Livetoshi</h2>
         <CardHeader>
           {picture && (
             <Image
