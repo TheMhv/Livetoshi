@@ -1,4 +1,7 @@
 import { Client, loadWasmAsync } from "@rust-nostr/nostr-sdk";
+import { loadConfig, Settings } from "@/lib/config";
+
+const config: Settings = loadConfig();
 
 class NostrClientManager {
   private static instance: NostrClientManager;
@@ -31,10 +34,12 @@ class NostrClientManager {
 
     const client = new Client();
 
-    await client.addRelay("wss://relay.snort.social");
-    await client.addRelay("wss://nos.lol");
-    await client.addRelay("wss://relay.damus.io");
-    await client.addRelay("wss://nostr.wine");
+    const relays = config.RELAYS;
+
+    relays.map(async (relay) => {
+      await client.addRelay(relay);
+    });
+
     await client.connect();
 
     this.client = client;
