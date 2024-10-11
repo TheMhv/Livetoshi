@@ -32,13 +32,14 @@ export default async function GoalPage({ params }: PageProps) {
         <h2 className="text-2xl font-bold text-center my-2">Livetoshi</h2>
         <CardHeader>
           {picture && (
-            <Image
-              src={picture}
-              width={120}
-              height={120}
-              alt={`Picture of ${name}`}
-              className="rounded-full mx-auto"
-            />
+            <div className="relative rounded-full w-[120px] h-[120px] mx-auto">
+              <Image
+                src={picture}
+                fill={true}
+                alt={`Picture of ${name}`}
+                className="absolute top-0 left-0 object-cover rounded-full w-full h-full"
+              />
+            </div>
           )}
 
           <h2 className="text-2xl font-bold text-center">{name}</h2>
