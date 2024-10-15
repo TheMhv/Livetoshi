@@ -49,7 +49,7 @@ export default async function GoalPage({ params }: PageProps) {
         />
       )}
 
-      <Card className="max-w-md mx-auto shadow-xl relative">
+      <Card className="min-w-[28rem] max-w-md mx-auto shadow-xl relative">
         <CardHeader className="mt-10">
           {picture && (
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-4 border-card rounded-full overflow-hidden w-28 h-28">

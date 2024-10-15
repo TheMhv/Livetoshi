@@ -217,8 +217,8 @@ FormProps) {
         </div>
       )}
       {!qrCode && !paymentStatus && (
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
             <Label htmlFor="name">Nome de Usuário</Label>
             <Input
               id="name"
@@ -249,7 +249,7 @@ FormProps) {
             </RadioGroup>
           )}
 
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="text">Mensagem</Label>
             <Input
               id="text"
@@ -261,8 +261,9 @@ FormProps) {
             />
           </div>
 
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="amount">Quantidade de satoshis</Label>
+
             <Input
               id="amount"
               name="amount"
@@ -272,6 +273,11 @@ FormProps) {
               onChange={handleInputChange}
               required
             />
+
+            <p className="text-xs text-right text-card-foreground/75">
+              Quantidade mínima:{" "}
+              <span className="font-bold">{config.MIN_SATOSHI_QNT} sats</span>
+            </p>
           </div>
 
           <Button type="submit" className="w-full" disabled={isSubmitting}>
