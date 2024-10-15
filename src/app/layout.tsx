@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Card } from "@/components/ui/card";
 import Logo from "@/components/logo";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Livetoshi",
@@ -21,14 +22,11 @@ export default function RootLayout({
           <div>
             {children}
 
-            <a
-              className="cursor-pointer"
-              href="https://github.com/TheMhv/Livetoshi"
-            >
+            <Link href="https://github.com/TheMhv/Livetoshi">
               <Card className="backdrop-invert backdrop-blur-lg hover:scale-95 px-2 py-1 max-w-fit mx-auto my-5">
                 <Logo />
               </Card>
-            </a>
+            </Link>
           </div>
         </div>
       </body>
