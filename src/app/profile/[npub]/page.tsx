@@ -18,7 +18,7 @@ export default async function GoalPage({ params }: PageProps) {
   const picture = profile.getPicture();
 
   return (
-    <div className="min-h-screen p-8 pb-20 sm:p-20 font-sans relative">
+    <>
       {banner && (
         <Image
           src={banner}
@@ -57,6 +57,6 @@ export default async function GoalPage({ params }: PageProps) {
           />
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 }

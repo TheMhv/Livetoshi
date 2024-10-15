@@ -39,7 +39,7 @@ export default async function GoalPage({ params }: PageProps) {
   const picture = profile.getPicture();
 
   return (
-    <div className="min-h-screen p-8 pb-20 sm:p-20 font-sans relative">
+    <>
       {banner && (
         <Image
           src={banner}
@@ -49,8 +49,7 @@ export default async function GoalPage({ params }: PageProps) {
         />
       )}
 
-      <Card className="max-w-md mx-auto">
-        <h2 className="text-2xl font-bold text-center my-2">Livetoshi</h2>
+      <Card className="max-w-md mx-auto shadow-xl">
         <CardHeader>
           {picture && (
             <div className="relative rounded-full w-[120px] h-[120px] mx-auto">
@@ -69,7 +68,7 @@ export default async function GoalPage({ params }: PageProps) {
             Envie uma mensagem e ajude nossa meta!
           </p>
 
-          <div>
+          <div className="mt-20">
             <p className="text-center font-bold">{event.content}</p>
 
             <div>
@@ -93,6 +92,6 @@ export default async function GoalPage({ params }: PageProps) {
           />
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 }

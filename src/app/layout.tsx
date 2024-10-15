@@ -1,17 +1,7 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+import { Card } from "@/components/ui/card";
+import Logo from "@/components/logo";
 
 export const metadata: Metadata = {
   title: "Livetoshi",
@@ -26,10 +16,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body className="antialiased">
+        <div className="flex items-center justify-center min-h-screen font-sans">
+          <div>
+            {children}
+
+            <a
+              className="cursor-pointer"
+              href="https://github.com/TheMhv/Livetoshi"
+            >
+              <Card className="backdrop-invert backdrop-blur-lg hover:scale-95 px-2 py-1 max-w-fit mx-auto my-5">
+                <Logo />
+              </Card>
+            </a>
+          </div>
+        </div>
       </body>
     </html>
   );
