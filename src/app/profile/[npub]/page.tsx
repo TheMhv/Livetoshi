@@ -28,24 +28,25 @@ export default async function GoalPage({ params }: PageProps) {
         />
       )}
 
-      <Card className="max-w-md mx-auto">
-        <h2 className="text-2xl font-bold text-center my-2">Livetoshi</h2>
-        <CardHeader>
+      <Card className="max-w-md mx-auto mt-12 relative">
+        <CardHeader className="mt-10">
           {picture && (
-            <div className="relative rounded-full w-[120px] h-[120px] mx-auto">
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-4 border-card rounded-full overflow-hidden w-28 h-28">
               <Image
                 src={picture}
                 fill={true}
                 alt={`Picture of ${name}`}
-                className="absolute top-0 left-0 object-cover rounded-full w-full h-full"
+                className="object-cover"
               />
             </div>
           )}
 
-          <h2 className="text-2xl font-bold text-center">{name}</h2>
+          <h2 className="text-2xl font-bold text-center mx-auto">{name}</h2>
 
           <p className="text-center text-gray-600">
-            Envie uma mensagem para {profile.getName()} usando satoshis
+            Envie uma mensagem para{" "}
+            <span className="font-bold">{profile.getName()}</span> usando
+            satoshis
           </p>
         </CardHeader>
 

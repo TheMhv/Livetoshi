@@ -271,11 +271,7 @@ FormProps) {
             />
           </div>
 
-          <Button
-            type="submit"
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white"
-            disabled={isSubmitting}
-          >
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? "Enviando..." : "Enviar"}
           </Button>
         </form>

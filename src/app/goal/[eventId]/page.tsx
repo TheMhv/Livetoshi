@@ -49,15 +49,15 @@ export default async function GoalPage({ params }: PageProps) {
         />
       )}
 
-      <Card className="max-w-md mx-auto shadow-xl">
-        <CardHeader>
+      <Card className="max-w-md mx-auto shadow-xl relative">
+        <CardHeader className="mt-10">
           {picture && (
-            <div className="relative rounded-full w-[120px] h-[120px] mx-auto">
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-4 border-card rounded-full overflow-hidden w-28 h-28">
               <Image
                 src={picture}
                 fill={true}
                 alt={`Picture of ${name}`}
-                className="absolute top-0 left-0 object-cover rounded-full w-full h-full"
+                className="object-cover"
               />
             </div>
           )}
@@ -68,15 +68,18 @@ export default async function GoalPage({ params }: PageProps) {
             Envie uma mensagem e ajude nossa meta!
           </p>
 
-          <div className="mt-20">
+          <div className="py-2 space-y-2">
             <p className="text-center font-bold">{event.content}</p>
 
             <div>
               <ProgressBar progress={progressPercentage} />
               <div className="flex items-center justify-between w-full">
-                <span>{progressPercentage.toFixed(2)}%</span>
+                <span className="font-bold text-primary">
+                  {progressPercentage.toFixed(2)}%
+                </span>
                 <span>
-                  {zapsSum / 1000} / {goalAmount / 1000}
+                  {zapsSum / 1000} /{" "}
+                  <span className="font-bold">{goalAmount / 1000}</span>
                 </span>
               </div>
             </div>
