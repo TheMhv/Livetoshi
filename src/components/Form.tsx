@@ -4,6 +4,9 @@ import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import Image from "next/image";
 import QRCode from "qrcode";
 
+import { Settings } from "@/lib/config";
+
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,8 +21,6 @@ import {
   LuUser,
   LuZap,
 } from "react-icons/lu";
-
-import { Settings } from "@/lib/config";
 
 interface FormData {
   name: string;
@@ -254,10 +255,19 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
                 >
                   {config.MODELS.map((model, index) => (
                     <div key={index} className="flex items-center space-x-2">
-                      <RadioGroupItem value={model} id={`model-${index}`} />
+                      <RadioGroupItem
+                        value={model}
+                        id={`model-${index}`}
+                        className="peer aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      />
                       <Label
                         htmlFor={`model-${index}`}
-                        className="flex items-center justify-center p-4 bg-white border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-500 peer-checked:text-blue-500 hover:bg-gray-50 w-full"
+                        className={cn(
+                          "flex items-center justify-center p-4 bg-white rounded-lg cursor-pointer hover:bg-gray-50 w-full",
+                          formData.model === model
+                            ? "border-2 border-primary text-primary"
+                            : "border border-primary/50"
+                        )}
                       >
                         {model}
                       </Label>
