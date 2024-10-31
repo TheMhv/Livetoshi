@@ -1,4 +1,4 @@
-import Form from "@/components/goals/Form";
+import Form from "@/components/Form";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ProgressBar } from "@/components/ui/progressBar";
 import { loadConfig, Settings } from "@/lib/config";

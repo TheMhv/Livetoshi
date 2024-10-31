@@ -21,9 +21,10 @@ interface FormData {
 interface FormProps {
   npub: string;
   config: Settings;
+  eventId?: string;
 }
 
-export default function Form({ npub, config }: FormProps) {
+export default function Form({ npub, config, eventId = undefined }: FormProps) {
   const [qrCode, setQRCode] = useState<string>("");
   const [paymentStatus, setPaymentStatus] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -73,6 +74,7 @@ export default function Form({ npub, config }: FormProps) {
         },
         body: JSON.stringify({
           npub: npub,
+          eventId: eventId,
           ...formData,
         }),
       });
@@ -189,7 +191,7 @@ export default function Form({ npub, config }: FormProps) {
             Pagamento bem-sucedido!
           </h3>
 
-          <p className="text-gray-600">Obrigado por ajudar!.</p>
+          <p className="text-gray-600">Obrigado por ajudar na nossa meta!.</p>
 
           <div className="mt-6">
             <Button

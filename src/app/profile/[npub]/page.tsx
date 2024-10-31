@@ -1,4 +1,4 @@
-import Form from "@/components/profile/Form";
+import Form from "@/components/Form";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { loadConfig, Settings } from "@/lib/config";
 import { getUser } from "@/lib/nostr/users";
