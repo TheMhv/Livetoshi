@@ -21,14 +21,9 @@ interface FormData {
 interface FormProps {
   npub: string;
   config: Settings;
-  //   onPaymentSettled: (amount: number) => void;
 }
 
-export default function Form({
-  npub,
-  config,
-}: //   onPaymentSettled,
-FormProps) {
+export default function Form({ npub, config }: FormProps) {
   const [qrCode, setQRCode] = useState<string>("");
   const [paymentStatus, setPaymentStatus] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -121,7 +116,6 @@ FormProps) {
 
           if (parsedData.status === "settled") {
             setPaymentStatus(true);
-            // onPaymentSettled(Number(formData.amount) * 1000);
             break;
           }
         }

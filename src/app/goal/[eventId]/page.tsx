@@ -91,7 +91,6 @@ export default async function GoalPage({ params }: PageProps) {
             npub={event.author.toBech32()}
             eventId={event.id.toBech32()}
             config={config}
-            // onPaymentSettled={handlePaymentSettled}
           />
         </CardContent>
       </Card>

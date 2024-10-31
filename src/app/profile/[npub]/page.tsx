@@ -51,11 +51,7 @@ export default async function GoalPage({ params }: PageProps) {
         </CardHeader>
 
         <CardContent>
-          <Form
-            npub={params.npub}
-            config={config}
-            // onPaymentSettled={handlePaymentSettled}
-          />
+          <Form npub={params.npub} config={config} />
         </CardContent>
       </Card>
     </>
