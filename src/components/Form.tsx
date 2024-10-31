@@ -8,6 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  LuArrowRight,
+  LuCopy,
+  LuLoader2,
+  LuMail,
+  LuMic,
+  LuUndo2,
+  LuUser,
+  LuZap,
+} from "react-icons/lu";
 
 import { Settings } from "@/lib/config";
 
@@ -146,7 +156,7 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
           <div className="text-center mb-4">
             <a
               href={`lightning:${invoice}`}
-              className="text-blue-600 hover:text-blue-800 underline"
+              className="text-primary hover:text-secondary underline"
             >
               Pagar com Lightning
             </a>
@@ -162,11 +172,15 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
                 readOnly
                 className="flex-grow"
               />
-              <Button
-                onClick={handleCopyInvoice}
-                className="ml-2 bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                {copySuccess ? "Copiado!" : "Copiar"}
+              <Button onClick={handleCopyInvoice} className="ml-2">
+                {copySuccess ? (
+                  "Copiado!"
+                ) : (
+                  <>
+                    {"Copiar"}
+                    <LuCopy className="ml-2" />
+                  </>
+                )}
               </Button>
             </div>
           </div>
@@ -182,6 +196,7 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
             className="w-full bg-gray-600 hover:bg-gray-700 text-white"
           >
             Voltar
+            <LuUndo2 className="ml-2" />
           </Button>
         </>
       )}
@@ -205,6 +220,7 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
               className="w-full bg-gray-600 hover:bg-gray-700 text-white"
             >
               Voltar
+              <LuUndo2 className="ml-2" />
             </Button>
           </div>
         </div>
@@ -212,7 +228,9 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
       {!qrCode && !paymentStatus && (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nome de Usuário</Label>
+            <Label htmlFor="name" className="flex items-center gap-2">
+              <LuUser /> Nome de Usuário
+            </Label>
             <Input
               id="name"
               name="name"
@@ -223,27 +241,37 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
           </div>
 
           {config.MODELS?.length > 0 && (
-            <RadioGroup
-              value={formData.model}
-              onValueChange={handleModelChange}
-              className="grid grid-cols-2 gap-4"
-            >
-              {config.MODELS.map((model, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <RadioGroupItem value={model} id={`model-${index}`} />
-                  <Label
-                    htmlFor={`model-${index}`}
-                    className="flex items-center justify-center p-4 bg-white border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-500 peer-checked:text-blue-500 hover:bg-gray-50 w-full"
-                  >
-                    {model}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
+            <>
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <LuMic /> Modelo de Voz
+                </Label>
+
+                <RadioGroup
+                  value={formData.model}
+                  onValueChange={handleModelChange}
+                  className="grid grid-cols-2 gap-4"
+                >
+                  {config.MODELS.map((model, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <RadioGroupItem value={model} id={`model-${index}`} />
+                      <Label
+                        htmlFor={`model-${index}`}
+                        className="flex items-center justify-center p-4 bg-white border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-500 peer-checked:text-blue-500 hover:bg-gray-50 w-full"
+                      >
+                        {model}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </div>
+            </>
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="text">Mensagem</Label>
+            <Label htmlFor="text" className="flex items-center gap-2">
+              <LuMail /> Mensagem
+            </Label>
             <Input
               id="text"
               name="text"
@@ -255,7 +283,9 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="amount">Quantidade de satoshis</Label>
+            <Label htmlFor="amount" className="flex items-center gap-2">
+              <LuZap /> Quantidade de satoshis
+            </Label>
 
             <Input
               id="amount"
@@ -273,8 +303,22 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
             </p>
           </div>
 
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Enviando..." : "Enviar"}
+          <Button
+            type="submit"
+            className="text-center w-full"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                {"Criando invoice..."}
+                <LuLoader2 className="animate-spin ml-2" />
+              </>
+            ) : (
+              <>
+                {"Continuar"}
+                <LuArrowRight className="ml-2" />
+              </>
+            )}
           </Button>
         </form>
       )}
