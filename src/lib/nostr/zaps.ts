@@ -10,6 +10,9 @@ import {
   ZapRequestData,
 } from "@rust-nostr/nostr-sdk";
 import { clientConnect } from "./client";
+import { loadConfig, Settings } from "../config";
+
+const config: Settings = loadConfig();
 
 export async function getFromEvent(id: string) {
   const client = await clientConnect();
@@ -41,7 +44,7 @@ export async function createRequest(
   await loadWasmAsync();
 
   const pubkey = PublicKey.parse(destination);
-  
+
   let eventID = undefined;
   if (eventId) {
     eventID = EventId.parse(eventId);
@@ -52,12 +55,7 @@ export async function createRequest(
   return await nip57AnonymousZapRequest(
     new ZapRequestData(
       pubkey,
-      [
-        "wss://relay.snort.social",
-        "wss://nos.lol",
-        "wss://relay.damus.io",
-        "wss://nostr.wine",
-      ],
+      config.RELAYS,
       text,
       amount * 1000,
       lnurl,
