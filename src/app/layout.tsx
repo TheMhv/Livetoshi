@@ -9,7 +9,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Livetoshi",
   description:
-    "Enable TTS messages with voice models in your live stream using the Lightning Network",
+    "Enable TTS messages with voice models in your live stream using NOSTR Zaps",
 };
 
 export default function RootLayout({
