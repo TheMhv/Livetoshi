@@ -28,10 +28,13 @@ export async function POST(request: NextRequest): Promise<Response> {
   );
 
   if (!invoice) {
-    return new NextResponse(JSON.stringify({ error: "Failed to create invoice" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new NextResponse(
+      JSON.stringify({ error: "Failed to create invoice" }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 
   const stream = new ReadableStream({
@@ -55,6 +58,11 @@ export async function POST(request: NextRequest): Promise<Response> {
 
 async function* check_payment(invoice: Invoice) {
   yield `data: ${JSON.stringify({ invoice: invoice })}\n\n`;
+
+  if (!invoice.verify) {
+    yield `data: ${JSON.stringify({ invoice: invoice })}\n\n`;
+    return;
+  }
 
   const paymentRequest = await fetch(invoice.verify);
   let payment = await paymentRequest.json();
