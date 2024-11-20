@@ -10,22 +10,10 @@ import {
   PublicKey,
   Timestamp,
 } from "@rust-nostr/nostr-sdk";
-import { MsEdgeTTS, OUTPUT_FORMAT } from "msedge-tts";
+import { MsEdgeTTS } from "msedge-tts";
+import { loadConfig, Settings } from "@/lib/config";
 
-// Constants in a separate object for better organization
-const CONFIG = {
-  NOTIFY_AUDIO_URL: "/notification.mp3",
-  QUEUE_CHECK_INTERVAL: 3000,
-  WIDGET_DISPLAY_DELAY: 2000,
-  WIDGET_HIDE_DELAY: 5000,
-  TTS: {
-    voice: "en-US-AndrewNeural",
-    rate: "0%",
-    volume: "0%",
-    pitch: "0%",
-    format: OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3,
-  },
-} as const;
+const config: Settings = loadConfig();
 
 // Types for better type safety
 interface TTSWidgetProps {
@@ -47,11 +35,11 @@ const playAudio = async (source: string): Promise<void> => {
 
 const createTTS = async (text: string) => {
   const tts = new MsEdgeTTS();
-  await tts.setMetadata(CONFIG.TTS.voice, CONFIG.TTS.format);
+  await tts.setMetadata(config.TTS.voice, config.TTS.format);
   return tts.toStream(text, {
-    rate: CONFIG.TTS.rate,
-    volume: CONFIG.TTS.volume,
-    pitch: CONFIG.TTS.pitch,
+    rate: config.TTS.rate,
+    volume: config.TTS.volume,
+    pitch: config.TTS.pitch,
   });
 };
 
@@ -115,16 +103,16 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
         const audioData = Buffer.concat(audioStreamData).toString("base64");
 
         // Sequence of actions
-        await playAudio(CONFIG.NOTIFY_AUDIO_URL);
+        await playAudio(config.NOTIFY_AUDIO_URL);
         setWidgetText(event.content);
         setIsVisible(true);
         await new Promise((resolve) =>
-          setTimeout(resolve, CONFIG.WIDGET_DISPLAY_DELAY)
+          setTimeout(resolve, config.WIDGET_DISPLAY_DELAY)
         );
         await playAudio(`data:audio/mp4;base64,${audioData}`);
         setIsVisible(false);
         await new Promise((resolve) =>
-          setTimeout(resolve, CONFIG.WIDGET_HIDE_DELAY)
+          setTimeout(resolve, config.WIDGET_HIDE_DELAY)
         );
 
         // Cleanup
@@ -145,7 +133,7 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
 
   // Set up polling
   useEffect(() => {
-    const intervalId = setInterval(fetchEvents, CONFIG.QUEUE_CHECK_INTERVAL);
+    const intervalId = setInterval(fetchEvents, config.QUEUE_CHECK_INTERVAL);
     return () => clearInterval(intervalId);
   }, [fetchEvents]);
 
