@@ -28,7 +28,7 @@ export default function RootLayout({
           <div>
             {children}
 
-            <Link href="https://github.com/TheMhv/Livetoshi">
+            <Link id="logo" href="https://github.com/TheMhv/Livetoshi">
               <Card className="backdrop-invert backdrop-blur-lg hover:scale-95 px-2 py-1 max-w-fit mx-auto my-5">
                 <Logo />
               </Card>
