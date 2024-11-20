@@ -19,7 +19,6 @@ const config: Settings = loadConfig();
 interface TTSWidgetProps {
   pubkey: string;
   onEventProcessed?: (event: Event) => void;
-  className?: string;
 }
 
 // Utility functions moved outside component
@@ -177,8 +176,8 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
   }, []);
 
   return (
-    <div ref={containerRef}>
-      <div className="widget-content">{widgetText}</div>
+    <div id="widget-container" ref={containerRef}>
+      <div id="widget">{widgetText}</div>
     </div>
   );
 };
