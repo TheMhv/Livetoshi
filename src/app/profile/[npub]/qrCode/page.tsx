@@ -3,6 +3,8 @@ import { headers } from "next/headers";
 import Image from "next/image";
 import QRCode from "qrcode";
 
+import "../widget/widget.css";
+
 interface PageProps {
   params: { npub: string };
 }
@@ -33,7 +35,7 @@ export default async function QRCodePage({ params }: PageProps) {
   const picture = user.getPicture();
 
   return (
-    <div className="flex flex-col items-center justify-center bg-primary rounded-xl border-4 border-primary p-2 pb-4 space-y-2 max-w-xs">
+    <div className="flex flex-col items-center justify-center bg-white rounded-xl border-4 border-primary p-2 pb-4 space-y-2 max-w-xs">
       <div className="relative">
         <Image
           src={qrCode}
@@ -46,7 +48,7 @@ export default async function QRCodePage({ params }: PageProps) {
 
         {picture && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="relative border-4 border-card rounded-full overflow-hidden w-20 h-20">
+            <div className="relative border-2 border-card rounded-full overflow-hidden w-20 h-20">
               <Image
                 src={picture}
                 fill
@@ -58,7 +60,7 @@ export default async function QRCodePage({ params }: PageProps) {
         )}
       </div>
 
-      <h1 className="text-white text-wrap text-3xl font-bold text-center">
+      <h1 className="text-primary text-wrap text-3xl font-bold text-center">
         Leia o código e envie sua mensagem
       </h1>
     </div>
