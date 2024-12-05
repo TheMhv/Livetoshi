@@ -4,6 +4,7 @@ import Image from "next/image";
 import QRCode from "qrcode";
 
 import "../widget/widget.css";
+import { RemoveLogo } from "@/components/utils/RemoveLogo";
 
 interface PageProps {
   params: { npub: string };
@@ -63,6 +64,8 @@ export default async function QRCodePage({ params }: PageProps) {
       <h1 className="text-primary text-wrap text-3xl font-bold text-center">
         Leia o código e envie sua mensagem
       </h1>
+
+      <RemoveLogo />
     </div>
   );
 }
