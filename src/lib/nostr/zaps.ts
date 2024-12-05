@@ -50,7 +50,9 @@ export async function createRequest(
     eventID = EventId.parse(eventId);
   }
 
-  const text = `${message.name} enviou ${amount} satoshis: ${message.comment}`;
+  const text = `${message.name || "Anônimo"} enviou ${amount} satoshis: ${
+    message.comment
+  }`;
 
   return await nip57AnonymousZapRequest(
     new ZapRequestData(

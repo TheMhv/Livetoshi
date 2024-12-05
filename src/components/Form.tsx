@@ -237,7 +237,6 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              required
             />
           </div>
 
