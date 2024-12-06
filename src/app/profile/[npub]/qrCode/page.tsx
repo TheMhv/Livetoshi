@@ -5,6 +5,7 @@ import QRCode from "qrcode";
 
 import "../widget/widget.css";
 import { RemoveLogo } from "@/components/utils/RemoveLogo";
+import Logo from "@/components/logo";
 
 interface PageProps {
   params: { npub: string };
@@ -37,6 +38,10 @@ export default async function QRCodePage({ params }: PageProps) {
 
   return (
     <div className="flex flex-col items-center justify-center bg-white rounded-xl border-4 border-primary p-2 pb-4 space-y-2 max-w-xs">
+      <div className="text-black text-wrap text-3xl font-bold text-center">
+        <Logo />
+      </div>
+
       <div className="relative">
         <Image
           src={qrCode}
