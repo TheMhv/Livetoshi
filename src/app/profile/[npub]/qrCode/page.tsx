@@ -49,7 +49,7 @@ export default async function QRCodePage({ params }: PageProps) {
 
         {picture && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="relative border-2 border-card rounded-full overflow-hidden w-20 h-20">
+            <div className="relative border-2 border-card rounded-full overflow-hidden w-24 h-24">
               <Image
                 src={picture}
                 fill
