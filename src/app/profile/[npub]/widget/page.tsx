@@ -1,4 +1,3 @@
-import { NostrProvider } from "@/components/NostrProvider";
 import { TTSWidget } from "@/components/Widget";
 
 import "./widget.css";
@@ -12,9 +11,7 @@ export default function widgetPage({ params }: PageProps) {
   return (
     <>
       <RemoveLogo />
-      <NostrProvider>
-        <TTSWidget pubkey={params.npub} />
-      </NostrProvider>
+      <TTSWidget pubkey={params.npub} />
     </>
   );
 }

@@ -1,8 +1,8 @@
 "use client";
 
-import { useContext, useEffect, useRef, useState, useCallback } from "react";
-import { NostrContext } from "./NostrProvider";
+import { useEffect, useRef, useState, useCallback } from "react";
 import {
+  Client,
   Event,
   EventSource,
   Filter,
@@ -12,10 +12,11 @@ import {
 } from "@rust-nostr/nostr-sdk";
 import { MsEdgeTTS } from "msedge-tts";
 import { loadConfig, Settings } from "@/lib/config";
+import { clientConnect } from "@/lib/nostr/client";
 
 const config: Settings = loadConfig();
 
-// Types for better type safety
+// Types for better type safet
 interface TTSWidgetProps {
   pubkey: string;
   onEventProcessed?: (event: Event) => void;
@@ -46,7 +47,7 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
   pubkey,
   onEventProcessed,
 }) => {
-  const { client } = useContext(NostrContext);
+  const [client, setClient] = useState<Client | undefined>(undefined);
   const [queue, setQueue] = useState<Event[]>([]);
   const [isVisible, setIsVisible] = useState(false);
   const [widgetText, setWidgetText] = useState("");
@@ -56,6 +57,8 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
 
   // Fetch events handler
   const fetchEvents = useCallback(async () => {
+    setClient(await clientConnect());
+
     if (!client || !pubkey) return;
 
     try {
