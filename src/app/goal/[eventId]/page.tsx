@@ -1,4 +1,4 @@
-import Form from "@/components/goals/Form";
+import Form from "@/components/Form";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ProgressBar } from "@/components/ui/progressBar";
 import { loadConfig, Settings } from "@/lib/config";
@@ -39,7 +39,7 @@ export default async function GoalPage({ params }: PageProps) {
   const picture = profile.getPicture();
 
   return (
-    <div className="min-h-screen p-8 pb-20 sm:p-20 font-sans relative">
+    <>
       {banner && (
         <Image
           src={banner}
@@ -49,16 +49,15 @@ export default async function GoalPage({ params }: PageProps) {
         />
       )}
 
-      <Card className="max-w-md mx-auto">
-        <h2 className="text-2xl font-bold text-center my-2">Livetoshi</h2>
-        <CardHeader>
+      <Card className="relative border border-primary min-w-[28rem] max-w-md mx-auto shadow-xl">
+        <CardHeader className="mt-10">
           {picture && (
-            <div className="relative rounded-full w-[120px] h-[120px] mx-auto">
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-4 border-card rounded-full overflow-hidden w-28 h-28">
               <Image
                 src={picture}
                 fill={true}
                 alt={`Picture of ${name}`}
-                className="absolute top-0 left-0 object-cover rounded-full w-full h-full"
+                className="object-cover"
               />
             </div>
           )}
@@ -69,15 +68,18 @@ export default async function GoalPage({ params }: PageProps) {
             Envie uma mensagem e ajude nossa meta!
           </p>
 
-          <div>
+          <div className="py-2 space-y-2">
             <p className="text-center font-bold">{event.content}</p>
 
             <div>
               <ProgressBar progress={progressPercentage} />
               <div className="flex items-center justify-between w-full">
-                <span>{progressPercentage.toFixed(2)}%</span>
+                <span className="font-bold text-primary">
+                  {progressPercentage.toFixed(2)}%
+                </span>
                 <span>
-                  {zapsSum / 1000} / {goalAmount / 1000}
+                  {zapsSum / 1000} /{" "}
+                  <span className="font-bold">{goalAmount / 1000}</span>
                 </span>
               </div>
             </div>
@@ -89,10 +91,9 @@ export default async function GoalPage({ params }: PageProps) {
             npub={event.author.toBech32()}
             eventId={event.id.toBech32()}
             config={config}
-            // onPaymentSettled={handlePaymentSettled}
           />
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 }

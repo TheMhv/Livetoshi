@@ -4,12 +4,23 @@ import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import Image from "next/image";
 import QRCode from "qrcode";
 
+import { Settings } from "@/lib/config";
+
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
-import { Settings } from "@/lib/config";
+import {
+  LuArrowRight,
+  LuCopy,
+  LuLoader2,
+  LuMail,
+  LuMic,
+  LuUndo2,
+  LuUser,
+  LuZap,
+} from "react-icons/lu";
 
 interface FormData {
   name: string;
@@ -21,14 +32,10 @@ interface FormData {
 interface FormProps {
   npub: string;
   config: Settings;
-  //   onPaymentSettled: (amount: number) => void;
+  eventId?: string;
 }
 
-export default function Form({
-  npub,
-  config,
-}: //   onPaymentSettled,
-FormProps) {
+export default function Form({ npub, config, eventId = undefined }: FormProps) {
   const [qrCode, setQRCode] = useState<string>("");
   const [paymentStatus, setPaymentStatus] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -78,6 +85,7 @@ FormProps) {
         },
         body: JSON.stringify({
           npub: npub,
+          eventId: eventId,
           ...formData,
         }),
       });
@@ -121,7 +129,6 @@ FormProps) {
 
           if (parsedData.status === "settled") {
             setPaymentStatus(true);
-            // onPaymentSettled(Number(formData.amount) * 1000);
             break;
           }
         }
@@ -150,7 +157,7 @@ FormProps) {
           <div className="text-center mb-4">
             <a
               href={`lightning:${invoice}`}
-              className="text-blue-600 hover:text-blue-800 underline"
+              className="text-primary hover:text-secondary underline"
             >
               Pagar com Lightning
             </a>
@@ -166,11 +173,15 @@ FormProps) {
                 readOnly
                 className="flex-grow"
               />
-              <Button
-                onClick={handleCopyInvoice}
-                className="ml-2 bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                {copySuccess ? "Copiado!" : "Copiar"}
+              <Button onClick={handleCopyInvoice} className="ml-2">
+                {copySuccess ? (
+                  "Copiado!"
+                ) : (
+                  <>
+                    {"Copiar"}
+                    <LuCopy className="ml-2" />
+                  </>
+                )}
               </Button>
             </div>
           </div>
@@ -186,6 +197,7 @@ FormProps) {
             className="w-full bg-gray-600 hover:bg-gray-700 text-white"
           >
             Voltar
+            <LuUndo2 className="ml-2" />
           </Button>
         </>
       )}
@@ -209,45 +221,66 @@ FormProps) {
               className="w-full bg-gray-600 hover:bg-gray-700 text-white"
             >
               Voltar
+              <LuUndo2 className="ml-2" />
             </Button>
           </div>
         </div>
       )}
       {!qrCode && !paymentStatus && (
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <Label htmlFor="name">Nome de Usuário</Label>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name" className="flex items-center gap-2">
+              <LuUser /> Nome de Usuário
+            </Label>
             <Input
               id="name"
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              required
             />
           </div>
 
           {config.MODELS?.length > 0 && (
-            <RadioGroup
-              value={formData.model}
-              onValueChange={handleModelChange}
-              className="grid grid-cols-2 gap-4"
-            >
-              {config.MODELS.map((model, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <RadioGroupItem value={model} id={`model-${index}`} />
-                  <Label
-                    htmlFor={`model-${index}`}
-                    className="flex items-center justify-center p-4 bg-white border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-500 peer-checked:text-blue-500 hover:bg-gray-50 w-full"
-                  >
-                    {model}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
+            <>
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <LuMic /> Modelo de Voz
+                </Label>
+
+                <RadioGroup
+                  value={formData.model}
+                  onValueChange={handleModelChange}
+                  className="grid grid-cols-2 gap-4"
+                >
+                  {config.MODELS.map((model, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <RadioGroupItem
+                        value={model}
+                        id={`model-${index}`}
+                        className="peer aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      />
+                      <Label
+                        htmlFor={`model-${index}`}
+                        className={cn(
+                          "flex items-center justify-center p-4 bg-white rounded-lg cursor-pointer hover:bg-gray-50 w-full",
+                          formData.model === model
+                            ? "border-2 border-primary text-primary"
+                            : "border border-primary/50"
+                        )}
+                      >
+                        {model}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </div>
+            </>
           )}
 
-          <div>
-            <Label htmlFor="text">Mensagem</Label>
+          <div className="space-y-2">
+            <Label htmlFor="text" className="flex items-center gap-2">
+              <LuMail /> Mensagem
+            </Label>
             <Input
               id="text"
               name="text"
@@ -258,8 +291,11 @@ FormProps) {
             />
           </div>
 
-          <div>
-            <Label htmlFor="amount">Quantidade de satoshis</Label>
+          <div className="space-y-2">
+            <Label htmlFor="amount" className="flex items-center gap-2">
+              <LuZap /> Quantidade de satoshis
+            </Label>
+
             <Input
               id="amount"
               name="amount"
@@ -269,14 +305,29 @@ FormProps) {
               onChange={handleInputChange}
               required
             />
+
+            <p className="text-xs text-right text-card-foreground/75">
+              Quantidade mínima:{" "}
+              <span className="font-bold">{config.MIN_SATOSHI_QNT} sats</span>
+            </p>
           </div>
 
           <Button
             type="submit"
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+            className="text-center w-full"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Enviando..." : "Enviar"}
+            {isSubmitting ? (
+              <>
+                {"Criando invoice..."}
+                <LuLoader2 className="animate-spin ml-2" />
+              </>
+            ) : (
+              <>
+                {"Continuar"}
+                <LuArrowRight className="ml-2" />
+              </>
+            )}
           </Button>
         </form>
       )}

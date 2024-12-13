@@ -17,7 +17,7 @@ const ProgressBar = React.forwardRef<
       {...props}
     >
       <div
-        className="h-full bg-blue-500 transition-all duration-300 ease-in-out"
+        className="h-full bg-primary transition-all duration-300 ease-in-out"
         style={{ width: `${clampedProgress}%` }}
       />
     </div>

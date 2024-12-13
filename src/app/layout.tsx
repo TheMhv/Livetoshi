@@ -1,22 +1,15 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+import { Card } from "@/components/ui/card";
+import Logo from "@/components/logo";
+import Link from "next/link";
+// import CornerMenu from "@/components/cornerMenu/cornerMenu";
+// import { NostrProvider } from "@/components/NostrProvider";
 
 export const metadata: Metadata = {
   title: "Livetoshi",
   description:
-    "Enable TTS messages with voice models in your live stream using the Lightning Network",
+    "Enable TTS messages with voice models in your live stream using NOSTR Zaps",
 };
 
 export default function RootLayout({
@@ -26,10 +19,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body className="antialiased relative">
+        {/* <NostrProvider>
+          <CornerMenu />
+        </NostrProvider> */}
+
+        <div className="flex items-center justify-center min-h-screen font-sans">
+          <div>
+            {children}
+
+            <Link id="logo" href="https://github.com/TheMhv/Livetoshi">
+              <Card className="backdrop-invert backdrop-blur-lg hover:scale-95 px-2 py-1 max-w-fit mx-auto my-5">
+                <Logo />
+              </Card>
+            </Link>
+          </div>
+        </div>
       </body>
     </html>
   );
