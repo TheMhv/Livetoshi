@@ -90,7 +90,11 @@ export default async function GoalPage({ params }: PageProps) {
           <Form
             npub={event.author.toBech32()}
             eventId={event.id.toBech32()}
-            config={config}
+            options={{
+              MODELS: config.MODELS,
+              MAX_TEXT_LENGTH: config.MAX_TEXT_LENGTH || 200,
+              MIN_SATOSHI_QNT: config.MIN_SATOSHI_QNT || 21,
+            }}
           />
         </CardContent>
       </Card>
