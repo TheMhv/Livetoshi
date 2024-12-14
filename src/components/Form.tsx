@@ -104,7 +104,8 @@ export default function Form({
       const reader = response.body!.getReader();
       const decoder = new TextDecoder();
 
-      while (true) {
+      let loop = true;
+      while (loop) {
         const { value, done } = await reader.read();
         if (done) break;
 
@@ -126,6 +127,8 @@ export default function Form({
               // @ts-expect-error
               await window.webln.sendPayment(parsedData.invoice.pr);
               setPaymentStatus(true);
+              loop = false;
+              break;
             } catch (error) {
               console.error(error);
               setQRCode(await QRCode.toDataURL(parsedData.invoice.pr));
@@ -135,6 +138,7 @@ export default function Form({
 
           if (parsedData.status === "settled") {
             setPaymentStatus(true);
+            loop = false;
             break;
           }
         }
@@ -213,7 +217,11 @@ export default function Form({
             Pagamento bem-sucedido!
           </h3>
 
-          <p className="text-gray-600">Obrigado por ajudar na nossa meta!.</p>
+          {eventId ? (
+            <p className="text-gray-600">Obrigado por ajudar na nossa meta!.</p>
+          ) : (
+            <p className="text-gray-600">Obrigado por usar o LiveSatoshi.</p>
+          )}
 
           <div className="mt-6">
             <Button

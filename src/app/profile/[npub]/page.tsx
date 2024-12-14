@@ -10,7 +10,7 @@ interface PageProps {
   params: { npub: string };
 }
 
-export default async function GoalPage({ params }: PageProps) {
+export default async function ProfilePage({ params }: PageProps) {
   const profile = await getUser(params.npub);
 
   const banner = profile.getBanner();
