@@ -1,44 +1,48 @@
 "use client";
 
-import { createContext, useState, useEffect } from "react";
+import { createContext, useEffect, useState } from "react";
 import {
   Client,
   loadWasmSync,
   Nip07Signer,
   NostrSigner,
 } from "@rust-nostr/nostr-sdk";
-import { Settings, loadConfig } from "@/lib/config";
 
 interface NostrProviderProps {
+  withSigner?: boolean;
+  relays: string[];
   children: React.ReactNode;
 }
 
 interface NostrContextProps {
   client: Client | null;
-  signer: Nip07Signer | null;
 }
 
 const NostrContext = createContext({
   client: null,
-  signer: null,
+  pubKey: null,
 } as NostrContextProps);
 
-const config: Settings = loadConfig();
-
-const NostrProvider: React.FC<NostrProviderProps> = ({ children }) => {
+const NostrProvider: React.FC<NostrProviderProps> = ({
+  withSigner = false,
+  relays,
+  children,
+}) => {
   const [client, setClient] = useState<Client | null>(null);
-  const [signer, setSigner] = useState<Nip07Signer | null>(null);
+  const [signer, setSigner] = useState<NostrSigner | null>(null);
 
   loadWasmSync();
 
   useEffect(() => {
-    const nip07Signer = new Nip07Signer();
-    setSigner(nip07Signer);
+    if (withSigner) {
+      const nip07Signer = new Nip07Signer();
 
-    const newSigner = NostrSigner.nip07(nip07Signer);
-    const newClient = new Client(newSigner);
+      const newSigner = NostrSigner.nip07(nip07Signer);
+      setSigner(newSigner);
+    }
 
-    const relays = config.RELAYS;
+    const newClient = new Client(signer || undefined);
+
     relays.map(async (relay) => {
       await newClient.addRelay(relay);
     });
@@ -46,12 +50,12 @@ const NostrProvider: React.FC<NostrProviderProps> = ({ children }) => {
     newClient.connect().then(() => {
       setClient(newClient);
     });
-  }, []);
+  }, [withSigner, relays]);
+
+  const values: NostrContextProps = { client };
 
   return (
-    <NostrContext.Provider value={{ client, signer } as NostrContextProps}>
-      {children}
-    </NostrContext.Provider>
+    <NostrContext.Provider value={values}>{children}</NostrContext.Provider>
   );
 };
 
