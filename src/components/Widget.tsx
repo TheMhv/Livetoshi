@@ -1,8 +1,13 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useContext,
+} from "react";
 import {
-  Client,
   Event,
   EventSource,
   Filter,
@@ -12,8 +17,8 @@ import {
 } from "@rust-nostr/nostr-sdk";
 import { MsEdgeTTS } from "msedge-tts";
 import { loadConfig, Settings } from "@/lib/config";
-import { clientConnect } from "@/lib/nostr/client";
 import { TriangleAlert } from "lucide-react";
+import { NostrContext } from "./NostrProvider";
 
 const config: Settings = loadConfig();
 
@@ -66,7 +71,8 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
   pubkey,
   onEventProcessed,
 }) => {
-  const [client, setClient] = useState<Client | undefined>(undefined);
+  const { client } = useContext(NostrContext);
+
   const [queue, setQueue] = useState<Event[]>([]);
   const [isVisible, setIsVisible] = useState(false);
   const [widgetText, setWidgetText] = useState("");
@@ -78,8 +84,6 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
 
   // Fetch events handler
   const fetchEvents = useCallback(async () => {
-    setClient(await clientConnect());
-
     if (!client || !pubkey) return;
 
     try {
