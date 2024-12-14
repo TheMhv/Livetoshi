@@ -119,7 +119,7 @@ export default function ProfileBadge() {
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<Metadata | null>(null);
 
-  const { signer, client } = useContext(NostrContext);
+  const { client, signer } = useContext(NostrContext);
 
   useEffect(() => {
     try {
@@ -136,7 +136,7 @@ export default function ProfileBadge() {
     if (!signer) return;
 
     try {
-      const signerPubKey = await signer.getPublicKey();
+      const signerPubKey = await signer.publicKey();
       setPubkey(signerPubKey);
     } catch (error) {
       console.error("Error getting public key:", error);

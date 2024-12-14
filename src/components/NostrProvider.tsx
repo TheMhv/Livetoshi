@@ -16,11 +16,12 @@ interface NostrProviderProps {
 
 interface NostrContextProps {
   client: Client | null;
+  signer: NostrSigner | null;
 }
 
 const NostrContext = createContext({
   client: null,
-  pubKey: null,
+  signer: null,
 } as NostrContextProps);
 
 const NostrProvider: React.FC<NostrProviderProps> = ({
@@ -52,7 +53,7 @@ const NostrProvider: React.FC<NostrProviderProps> = ({
     });
   }, [withSigner, relays]);
 
-  const values: NostrContextProps = { client };
+  const values: NostrContextProps = { client, signer };
 
   return (
     <NostrContext.Provider value={values}>{children}</NostrContext.Provider>
