@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   Client,
   Event,
@@ -13,6 +13,7 @@ import {
 import { MsEdgeTTS } from "msedge-tts";
 import { loadConfig, Settings } from "@/lib/config";
 import { clientConnect } from "@/lib/nostr/client";
+import { TriangleAlert } from "lucide-react";
 
 const config: Settings = loadConfig();
 
@@ -43,6 +44,24 @@ const createTTS = async (text: string) => {
   });
 };
 
+const ErrorAlert: React.FC<{ text: string }> = ({ text }) => (
+  <div className="fixed bottom-0 left-0 z-50 p-4 sm:p-5">
+    <div
+      className="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-neutral-300"
+      role="alert"
+    >
+      <TriangleAlert className="flex-shrink-0 inline size-4 me-2" />
+
+      <span className="sr-only">Error</span>
+
+      <div>
+        <span className="font-medium">Error!</span>
+        {text}
+      </div>
+    </div>
+  </div>
+);
+
 export const TTSWidget: React.FC<TTSWidgetProps> = ({
   pubkey,
   onEventProcessed,
@@ -51,6 +70,8 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
   const [queue, setQueue] = useState<Event[]>([]);
   const [isVisible, setIsVisible] = useState(false);
   const [widgetText, setWidgetText] = useState("");
+  const [errorText, setErrorText] = useState<string | undefined>();
+
   const containerRef = useRef<HTMLDivElement>(null);
   const lastZapRef = useRef<Event>();
   const isProcessingRef = useRef(false);
@@ -82,6 +103,7 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
         setQueue((prev) => [latestEvent, ...prev]);
       }
     } catch (error) {
+      setErrorText("Error processing audio stream");
       console.error("Error fetching events:", error);
     }
   }, [client, pubkey]);
@@ -124,10 +146,12 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
       });
 
       audioStream.on("error", (error) => {
+        setErrorText("Error processing audio stream");
         console.error("Error processing audio stream:", error);
         isProcessingRef.current = false;
       });
     } catch (error) {
+      setErrorText("Error processing event");
       console.error("Error processing event:", error);
       isProcessingRef.current = false;
     }
@@ -179,8 +203,12 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
   }, []);
 
   return (
-    <div id="widget-container" ref={containerRef}>
-      <div id="widget">{widgetText}</div>
-    </div>
+    <>
+      <div id="widget-container" ref={containerRef}>
+        <div id="widget">{widgetText}</div>
+      </div>
+
+      {errorText && <ErrorAlert text={errorText} />}
+    </>
   );
 };
