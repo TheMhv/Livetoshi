@@ -131,7 +131,9 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
         const audioData = Buffer.concat(audioStreamData).toString("base64");
 
         // Sequence of actions
-        await playAudio(config.NOTIFY_AUDIO_URL);
+        await playAudio(config.NOTIFY_AUDIO_URL).catch(() =>
+          setErrorText("Error when play audio")
+        );
         setWidgetText(event.content);
         setIsVisible(true);
         await new Promise((resolve) =>
@@ -163,13 +165,23 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
 
   // Set up polling
   useEffect(() => {
-    const intervalId = setInterval(fetchEvents, config.QUEUE_CHECK_INTERVAL);
-    return () => clearInterval(intervalId);
+    try {
+      const intervalId = setInterval(fetchEvents, config.QUEUE_CHECK_INTERVAL);
+      return () => clearInterval(intervalId);
+    } catch (error) {
+      console.error("Error set up polling:", error);
+      setErrorText("Error set up polling");
+    }
   }, [fetchEvents]);
 
   // Process queue when it changes
   useEffect(() => {
-    processQueue();
+    try {
+      processQueue();
+    } catch (error) {
+      console.error("Error process queue:", error);
+      setErrorText("Error process queue");
+    }
   }, [queue, processQueue]);
 
   // Handle visibility animations
