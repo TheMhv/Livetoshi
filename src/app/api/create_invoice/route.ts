@@ -74,4 +74,5 @@ async function* check_payment(invoice: Invoice) {
   }
 
   yield `data: ${JSON.stringify({ status: "settled" })}\n\n`;
+  return;
 }

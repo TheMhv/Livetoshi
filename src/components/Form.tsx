@@ -4,8 +4,6 @@ import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import Image from "next/image";
 import QRCode from "qrcode";
 
-import { Settings } from "@/lib/config";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,11 +29,19 @@ interface FormData {
 
 interface FormProps {
   npub: string;
-  config: Settings;
+  options: {
+    MODELS: string[];
+    MAX_TEXT_LENGTH: number;
+    MIN_SATOSHI_QNT: number;
+  };
   eventId?: string;
 }
 
-export default function Form({ npub, config, eventId = undefined }: FormProps) {
+export default function Form({
+  npub,
+  options,
+  eventId = undefined,
+}: FormProps) {
   const [qrCode, setQRCode] = useState<string>("");
   const [paymentStatus, setPaymentStatus] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -98,7 +104,8 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
       const reader = response.body!.getReader();
       const decoder = new TextDecoder();
 
-      while (true) {
+      let loop = true;
+      while (loop) {
         const { value, done } = await reader.read();
         if (done) break;
 
@@ -120,6 +127,8 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
               // @ts-expect-error
               await window.webln.sendPayment(parsedData.invoice.pr);
               setPaymentStatus(true);
+              loop = false;
+              break;
             } catch (error) {
               console.error(error);
               setQRCode(await QRCode.toDataURL(parsedData.invoice.pr));
@@ -129,6 +138,7 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
 
           if (parsedData.status === "settled") {
             setPaymentStatus(true);
+            loop = false;
             break;
           }
         }
@@ -207,7 +217,11 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
             Pagamento bem-sucedido!
           </h3>
 
-          <p className="text-gray-600">Obrigado por ajudar na nossa meta!.</p>
+          {eventId ? (
+            <p className="text-gray-600">Obrigado por ajudar na nossa meta!.</p>
+          ) : (
+            <p className="text-gray-600">Obrigado por usar o LiveSatoshi.</p>
+          )}
 
           <div className="mt-6">
             <Button
@@ -240,7 +254,7 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
             />
           </div>
 
-          {config.MODELS?.length > 0 && (
+          {options.MODELS.length > 0 && (
             <>
               <div className="space-y-2">
                 <Label className="flex items-center gap-2">
@@ -252,7 +266,7 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
                   onValueChange={handleModelChange}
                   className="grid grid-cols-2 gap-4"
                 >
-                  {config.MODELS.map((model, index) => (
+                  {options.MODELS.map((model, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <RadioGroupItem
                         value={model}
@@ -285,7 +299,7 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
               id="text"
               name="text"
               value={formData.text}
-              maxLength={config.MAX_TEXT_LENGTH || 200}
+              maxLength={options.MAX_TEXT_LENGTH || 200}
               onChange={handleInputChange}
               required
             />
@@ -300,7 +314,7 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
               id="amount"
               name="amount"
               type="number"
-              min={config.MIN_SATOSHI_QNT || 100}
+              min={options.MIN_SATOSHI_QNT}
               value={formData.amount}
               onChange={handleInputChange}
               required
@@ -308,7 +322,7 @@ export default function Form({ npub, config, eventId = undefined }: FormProps) {
 
             <p className="text-xs text-right text-card-foreground/75">
               Quantidade mínima:{" "}
-              <span className="font-bold">{config.MIN_SATOSHI_QNT} sats</span>
+              <span className="font-bold">{options.MIN_SATOSHI_QNT} sats</span>
             </p>
           </div>
 

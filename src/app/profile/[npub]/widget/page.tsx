@@ -1,7 +1,6 @@
-import { TTSWidget } from "@/components/Widget";
-
 import "./widget.css";
-import { RemoveLogo } from "@/components/utils/RemoveLogo";
+
+import { TTSWidget } from "@/components/Widget";
 
 interface PageProps {
   params: { npub: string };
@@ -10,7 +9,6 @@ interface PageProps {
 export default function widgetPage({ params }: PageProps) {
   return (
     <>
-      <RemoveLogo />
       <TTSWidget pubkey={params.npub} />
     </>
   );

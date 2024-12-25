@@ -10,7 +10,7 @@ interface PageProps {
   params: { npub: string };
 }
 
-export default async function GoalPage({ params }: PageProps) {
+export default async function ProfilePage({ params }: PageProps) {
   const profile = await getUser(params.npub);
 
   const banner = profile.getBanner();
@@ -51,7 +51,14 @@ export default async function GoalPage({ params }: PageProps) {
         </CardHeader>
 
         <CardContent>
-          <Form npub={params.npub} config={config} />
+          <Form
+            npub={params.npub}
+            options={{
+              MODELS: config.MODELS,
+              MAX_TEXT_LENGTH: config.MAX_TEXT_LENGTH || 200,
+              MIN_SATOSHI_QNT: config.MIN_SATOSHI_QNT || 21,
+            }}
+          />
         </CardContent>
       </Card>
     </>
