@@ -1,5 +1,4 @@
 import * as dotenv from "dotenv";
-import { OUTPUT_FORMAT, PITCH, RATE, VOLUME } from "msedge-tts";
 dotenv.config();
 
 interface Settings {
@@ -11,13 +10,6 @@ interface Settings {
   QUEUE_CHECK_INTERVAL: number;
   WIDGET_DISPLAY_DELAY: number;
   WIDGET_HIDE_DELAY: number;
-  TTS: {
-    voice: string;
-    rate: RATE | string | number;
-    volume: VOLUME | string | number;
-    pitch: PITCH | string;
-    format: OUTPUT_FORMAT;
-  };
 }
 
 const loadConfig = (): Settings => {
@@ -37,13 +29,6 @@ const loadConfig = (): Settings => {
     QUEUE_CHECK_INTERVAL: parseInt(process.env.QUEUE_CHECK_INTERVAL || "3000"),
     WIDGET_DISPLAY_DELAY: parseInt(process.env.WIDGET_DISPLAY_DELAY || "2000"),
     WIDGET_HIDE_DELAY: parseInt(process.env.WIDGET_HIDE_DELAY || "5000"),
-    TTS: {
-      voice: process.env.VOICE || "pt-BR-ThalitaNeural",
-      rate: process.env.RATE || "0%",
-      volume: process.env.VOLUME || "0%",
-      pitch: process.env.PITCH || "0%",
-      format: OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3,
-    },
   };
 };
 
