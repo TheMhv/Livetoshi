@@ -4,21 +4,11 @@ import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import Image from "next/image";
 import QRCode from "qrcode";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  LuArrowRight,
-  LuCopy,
-  LuLoader2,
-  LuMail,
-  LuMic,
-  LuUndo2,
-  LuUser,
-  LuZap,
-} from "react-icons/lu";
+import { LuCopy, LuUndo2 } from "react-icons/lu";
+import FormEnvioMensagem from "./FormEnvioMensagem";
 
 interface FormData {
   name: string;
@@ -241,109 +231,14 @@ export default function Form({
         </div>
       )}
       {!qrCode && !paymentStatus && (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name" className="flex items-center gap-2">
-              <LuUser /> Nome de Usuário
-            </Label>
-            <Input
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          {options.MODELS.length > 0 && (
-            <>
-              <div className="space-y-2">
-                <Label className="flex items-center gap-2">
-                  <LuMic /> Modelo de Voz
-                </Label>
-
-                <RadioGroup
-                  value={formData.model}
-                  onValueChange={handleModelChange}
-                  className="grid grid-cols-2 gap-4"
-                >
-                  {options.MODELS.map((model, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <RadioGroupItem
-                        value={model}
-                        id={`model-${index}`}
-                        className="peer aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      />
-                      <Label
-                        htmlFor={`model-${index}`}
-                        className={cn(
-                          "flex items-center justify-center p-4 bg-white rounded-lg cursor-pointer hover:bg-gray-50 w-full",
-                          formData.model === model
-                            ? "border-2 border-primary text-primary"
-                            : "border border-primary/50"
-                        )}
-                      >
-                        {model}
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              </div>
-            </>
-          )}
-
-          <div className="space-y-2">
-            <Label htmlFor="text" className="flex items-center gap-2">
-              <LuMail /> Mensagem
-            </Label>
-            <Input
-              id="text"
-              name="text"
-              value={formData.text}
-              maxLength={options.MAX_TEXT_LENGTH || 200}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="amount" className="flex items-center gap-2">
-              <LuZap /> Quantidade de satoshis
-            </Label>
-
-            <Input
-              id="amount"
-              name="amount"
-              type="number"
-              min={options.MIN_SATOSHI_QNT}
-              value={formData.amount}
-              onChange={handleInputChange}
-              required
-            />
-
-            <p className="text-xs text-right text-card-foreground/75">
-              Quantidade mínima:{" "}
-              <span className="font-bold">{options.MIN_SATOSHI_QNT} sats</span>
-            </p>
-          </div>
-
-          <Button
-            type="submit"
-            className="text-center w-full"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              <>
-                {"Criando invoice..."}
-                <LuLoader2 className="animate-spin ml-2" />
-              </>
-            ) : (
-              <>
-                {"Continuar"}
-                <LuArrowRight className="ml-2" />
-              </>
-            )}
-          </Button>
-        </form>
+        <FormEnvioMensagem
+          formData={formData}
+          options={options}
+          handleSubmit={handleSubmit}
+          handleInputChange={handleInputChange}
+          handleModelChange={handleModelChange}
+          isSubmitting={isSubmitting}
+        />
       )}
     </>
   );
