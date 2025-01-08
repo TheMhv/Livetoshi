@@ -302,7 +302,7 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
         <div id="widget">{widgetText}</div>
       </div>
 
-      {goalTotal && zapsSum && (
+      {goalTotal != 0 && zapsSum != 0 && (
         <GoalBar
           name={goalName}
           currentAmount={zapsSum}
@@ -428,7 +428,7 @@ const GoalBar: React.FC<{
   const progressPercentage = (currentAmount / totalAmount) * 100;
 
   return (
-    <div className="w-[250px] text-black">
+    <div className="w-[250px] text-white">
       <p className="text-center font-bold">{name}</p>
 
       <div>
