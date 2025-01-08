@@ -24,6 +24,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { LuArrowRight } from "react-icons/lu";
 import { RemoveLogo } from "./utils/RemoveLogo";
+import { ProgressBar } from "./ui/progressBar";
 
 const config: Settings = loadConfig();
 
@@ -101,6 +102,11 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
   const min_sats = parseInt(params.get("min_sats") || "0");
   const max_text = parseInt(params.get("max_text") || "0");
 
+  const goalName = params.get("goalName") || "";
+  const goalTotal = parseInt(params.get("goalTotal") || "0");
+  const goalTime = parseInt(params.get("goalTime") || "24") * 3600;
+  const [zapsSum, setZapsSum] = useState<number>(0);
+
   const fetchEvents = useCallback(async () => {
     if (!client) {
       setClient(await clientConnect());
@@ -113,7 +119,12 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
         .pubkey(PublicKey.parse(pubkey))
         .kind(new Kind(9735))
         .until(Timestamp.now())
-        .since(Timestamp.fromSecs(Timestamp.now().asSecs() - 36000));
+        .since(
+          Timestamp.fromSecs(
+            Timestamp.now().asSecs() -
+              (goalTotal && goalTime ? goalTime : 36000)
+          )
+        );
 
       const eventsData = (
         await client.getEventsOf([filter], EventSource.relays())
@@ -128,11 +139,30 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
         lastZapRef.current = latestEvent;
         setQueue((prev) => [latestEvent, ...prev]);
       }
+
+      if (goalTotal) {
+        setZapsSum(
+          eventsData
+            .map((zapEvent) => {
+              const description = zapEvent.getTagContent("description");
+              if (!description) {
+                return 0;
+              }
+
+              return (
+                parseInt(
+                  Event.fromJson(description).getTagContent("amount") || "0"
+                ) / 1000
+              );
+            })
+            .reduce((a, b) => a + b, 0)
+        );
+      }
     } catch (error) {
       setErrorText("Error processing audio stream");
       console.error("Error fetching events:", error);
     }
-  }, [client, pubkey, ttsVoice]);
+  }, [client, goalTime, goalTotal, pubkey, ttsVoice]);
 
   const processQueue = useCallback(async () => {
     if (isProcessingRef.current || queue.length === 0) return;
@@ -271,6 +301,15 @@ export const TTSWidget: React.FC<TTSWidgetProps> = ({
       <div id="widget-container" ref={containerRef}>
         <div id="widget">{widgetText}</div>
       </div>
+
+      {goalTotal && zapsSum && (
+        <GoalBar
+          name={goalName}
+          currentAmount={zapsSum}
+          totalAmount={goalTotal}
+        />
+      )}
+
       {errorText && <ErrorAlert text={errorText} />}
     </>
   ) : (
@@ -378,5 +417,31 @@ const Configuration: React.FC = () => {
         )}
       </CardContent>
     </Card>
+  );
+};
+
+const GoalBar: React.FC<{
+  name?: string;
+  currentAmount: number;
+  totalAmount: number;
+}> = ({ name, currentAmount, totalAmount }) => {
+  const progressPercentage = (currentAmount / totalAmount) * 100;
+
+  return (
+    <div className="w-[250px] text-black">
+      <p className="text-center font-bold">{name}</p>
+
+      <div>
+        <ProgressBar progress={progressPercentage} />
+        <div className="flex items-center justify-between w-full">
+          <span className="font-bold text-primary">
+            {progressPercentage.toFixed(2)}%
+          </span>
+          <span>
+            {currentAmount} / <span className="font-bold">{totalAmount}</span>
+          </span>
+        </div>
+      </div>
+    </div>
   );
 };
