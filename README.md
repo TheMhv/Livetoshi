@@ -44,4 +44,4 @@ Then, start the server:
 $ npm run start
 ```
 
-And run the [widget project](https://github.com/TheMhv/Livetoshi-Server).
+And run the [widget project](https://github.com/TheMhv/Livetoshi-TTS).
