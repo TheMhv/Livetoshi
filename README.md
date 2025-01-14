@@ -14,6 +14,18 @@ Ex: [TheMhv](https://livetoshi.stream/profile/npub1v3ps5nhexd9fdur4gz82xgc3jmhqw
 And go to `/profile/<npub>/widget` to access the TTS widget:
 Ex: [TheMhv Widget](https://livetoshi.stream/profile/npub1v3ps5nhexd9fdur4gz82xgc3jmhqwduqhrhy7lwtmm727m086u5sqnuvcz/widget)
 
+## Goals
+
+You can go to `/goal/{eventId}` to access some NOSTR goal event:
+Ex: [Test Goal](https://livetoshi.stream/goal/fde6cf806cf4e551dd078018c84c7c8cfea88176c22704cc2a56c486851fd7e4)
+
+## Utils
+
+You can go to `/profile/<npub>/qrCode` to access some NOSTR goal event:
+Ex: [TheMhv QR Code](https://livetoshi.stream/profile/npub1v3ps5nhexd9fdur4gz82xgc3jmhqwduqhrhy7lwtmm727m086u5sqnuvcz/qrCode)
+
+> You can run with custom voices models. Find more information on [Livetoshi TTS](https://github.com/TheMhv/Livetoshi-TTS)
+
 # Local Deployment
 ## Instalation
 
