@@ -2,6 +2,19 @@
 
 Enable TTS messages with voice models in your live stream using NOSTR Zaps
 
+Try now: https://livetoshi.stream
+
+## Usage
+
+### Zaps
+
+You can go to `/profile/<npub>` to access some profile.
+Ex: [TheMhv](https://livetoshi.stream/profile/npub1v3ps5nhexd9fdur4gz82xgc3jmhqwduqhrhy7lwtmm727m086u5sqnuvcz)
+
+And go to `/profile/<npub>/widget` to access the TTS widget:
+Ex: [TheMhv Widget](https://livetoshi.stream/profile/npub1v3ps5nhexd9fdur4gz82xgc3jmhqwduqhrhy7lwtmm727m086u5sqnuvcz/widget)
+
+# Local Deployment
 ## Instalation
 
 - First, install the packages:
