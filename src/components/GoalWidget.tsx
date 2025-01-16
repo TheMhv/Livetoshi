@@ -7,28 +7,27 @@ import {
   EventSource,
   Filter,
   Kind,
-  loadWasmSync,
   Timestamp,
 } from "@rust-nostr/nostr-sdk";
 import { loadConfig, Settings } from "@/lib/config";
 import { clientConnect } from "@/lib/nostr/client";
 import { ProgressBar } from "./ui/progressBar";
+import { RemoveLogo } from "./utils/RemoveLogo";
+import { getEvent } from "@/lib/nostr/events";
 
 const config: Settings = loadConfig();
 
 interface GoalWidgetProps {
-  goalEventJson: string;
+  goalEventId: string;
 }
 
-export const GoalWidget: React.FC<GoalWidgetProps> = ({ goalEventJson }) => {
+export const GoalWidget: React.FC<GoalWidgetProps> = ({ goalEventId }) => {
   const [client, setClient] = useState<Client>();
   const [zapsSum, setZapsSum] = useState<number>(0);
 
-  loadWasmSync();
-  const goalEvent = Event.fromJson(goalEventJson);
-
-  const goalName = goalEvent.content;
-  const goalTotal = parseInt(goalEvent.getTagContent("amount") || "0");
+  const [goalEvent, setGoalEvent] = useState<Event>();
+  const [goalName, setGoalName] = useState<string>("");
+  const [goalTotal, setGoalTotal] = useState<number>(0);
 
   const fetchEvents = useCallback(async () => {
     if (!client) {
@@ -58,13 +57,35 @@ export const GoalWidget: React.FC<GoalWidgetProps> = ({ goalEventJson }) => {
     setZapsSum(zapsSum);
   }, [client, goalEvent]);
 
-  useEffect(() => {
-    const intervalId = setInterval(fetchEvents, config.QUEUE_CHECK_INTERVAL);
-    return () => clearInterval(intervalId);
-  }, [fetchEvents]);
+  const setupGoalParams = useCallback(async () => {
+    setGoalEvent(await getEvent(goalEventId));
 
-  return (
-    <GoalBar name={goalName} currentAmount={zapsSum} totalAmount={goalTotal} />
+    if (!goalEvent) {
+      return;
+    }
+
+    setGoalName(goalEvent.content);
+    setGoalTotal(parseInt(goalEvent.getTagContent("amount") || "0"));
+  }, [goalEvent, goalEventId]);
+
+  useEffect(() => {
+    setupGoalParams().finally(() => {
+      const intervalId = setInterval(fetchEvents, config.QUEUE_CHECK_INTERVAL);
+      return () => clearInterval(intervalId);
+    });
+  }, [fetchEvents, setupGoalParams]);
+
+  return goalEvent && zapsSum && goalTotal ? (
+    <>
+      <GoalBar
+        name={goalName}
+        currentAmount={zapsSum}
+        totalAmount={goalTotal}
+      />
+      <RemoveLogo />
+    </>
+  ) : (
+    <p className="text-white text-center font-bold max-w-max">Loading...</p>
   );
 };
 
