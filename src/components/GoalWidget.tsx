@@ -51,7 +51,7 @@ export const GoalWidget: React.FC<GoalWidgetProps> = ({ goalEventId }) => {
           "amount"
         ) || "0"
       );
-      return sum + amount;
+      return sum + amount / 1000;
     }, 0);
 
     setZapsSum(zapsSum);
@@ -97,7 +97,7 @@ const GoalBar: React.FC<{
   const progressPercentage = (currentAmount / totalAmount) * 100;
 
   return (
-    <div className="max-w-max text-white">
+    <div className="w-[300px] text-white">
       <p className="text-center font-bold">{name}</p>
 
       <div>
