@@ -27,7 +27,7 @@ interface FormData {
   amount: string;
 }
 
-interface FormProps {
+export interface FormProps {
   npub: string;
   options: {
     MODELS: string[];
