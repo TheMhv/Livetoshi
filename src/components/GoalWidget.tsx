@@ -85,7 +85,7 @@ export const GoalWidget: React.FC<GoalWidgetProps> = ({ goalEventId }) => {
       <RemoveLogo />
     </>
   ) : (
-    <p className="text-white text-center font-bold max-w-max">Loading...</p>
+    <p className="text-black text-center font-bold max-w-max">Loading...</p>
   );
 };
 
@@ -94,10 +94,10 @@ const GoalBar: React.FC<{
   currentAmount: number;
   totalAmount: number;
 }> = ({ name, currentAmount, totalAmount }) => {
-  const progressPercentage = (currentAmount / totalAmount) * 100;
+  const progressPercentage = (currentAmount / totalAmount) * 100 * 1000;
 
   return (
-    <div className="w-[300px] text-white">
+    <div className="w-[250px] text-black">
       <p className="text-center font-bold">{name}</p>
 
       <div>
@@ -108,7 +108,8 @@ const GoalBar: React.FC<{
           </span>
 
           <span>
-            {currentAmount} / <span className="font-bold">{totalAmount}</span>
+            {currentAmount} /{" "}
+            <span className="font-bold">{totalAmount / 1000}</span>
           </span>
         </div>
       </div>
